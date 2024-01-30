@@ -39,13 +39,13 @@ class AddBookController extends GetxController {
     if (formkey.currentState!.validate()) {
       final response = await ApiProvider.instance().post(Endpoint.book,
           data: dio.FormData.fromMap(
-              {"Judul": judulController.text.toString(),
-                "Penulis": penulisController.text.toString(),
-                "Penerbit": penerbitController.text.toString(),
-                "Tahun Terbit": tahunController.text.toString()}));
+              {"judul": judulController.text.toString(),
+                "penulis": penulisController.text.toString(),
+                "penerbit": penerbitController.text.toString(),
+                "tahun_terbit": int.parse(tahunController.text.toString())}));
       if (response.statusCode == 201) {
         await StorageProvider.write(StorageKey.status, "logged");
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.BOOK);
       } else {
         Get.snackbar("Sorry", "Login Gagal", backgroundColor: Colors.orange);
       }
