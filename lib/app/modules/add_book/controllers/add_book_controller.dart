@@ -6,6 +6,7 @@ import 'package:petugas_perpustakaan_kelas_c/app/data/constant/endpoint.dart';
 import 'package:petugas_perpustakaan_kelas_c/app/data/provider/api_provider.dart';
 import 'package:petugas_perpustakaan_kelas_c/app/data/provider/storage_provider.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:petugas_perpustakaan_kelas_c/app/modules/Book/controllers/book_controller.dart';
 
 import '../../../routes/app_pages.dart';
 
@@ -16,8 +17,9 @@ class AddBookController extends GetxController {
   final TextEditingController penerbitController = TextEditingController();
   final TextEditingController tahunController = TextEditingController();
   final loading = false.obs;
-
   final count = 0.obs;
+  final BookController _bookController = Get.find();
+
   @override
   void onInit() {
     super.onInit();
@@ -32,35 +34,41 @@ class AddBookController extends GetxController {
   void onClose() {
     super.onClose();
   }
-  add() async {loading(true);
-  try{
-    FocusScope.of(Get.context!).unfocus();
-    formkey.currentState?.save();
-    if (formkey.currentState!.validate()) {
-      final response = await ApiProvider.instance().post(Endpoint.book,
-          data: dio.FormData.fromMap(
-              {"judul": judulController.text.toString(),
-                "penulis": penulisController.text.toString(),
-                "penerbit": penerbitController.text.toString(),
-                "tahun_terbit": int.parse(tahunController.text.toString())}));
-      if (response.statusCode == 201) {
-        await StorageProvider.write(StorageKey.status, "logged");
-        Get.offAllNamed(Routes.BOOK);
-      } else {
-        Get.snackbar("Sorry", "Login Gagal", backgroundColor: Colors.orange);
+
+  add() async {
+    loading(true);
+    try {
+      FocusScope.of(Get.context!).unfocus();
+      formkey.currentState?.save();
+      if (formkey.currentState!.validate()) {
+        final response = await ApiProvider.instance().post(Endpoint.book,
+            data: dio.FormData.fromMap({
+              "judul": judulController.text.toString(),
+              "penulis": penulisController.text.toString(),
+              "penerbit": penerbitController.text.toString(),
+              "tahun_terbit": int.parse(tahunController.text.toString())
+            }));
+        if (response.statusCode == 201) {
+          _bookController.getData();
+          Get.back();
+        } else {
+          Get.snackbar("Sorry", "Login Gagal", backgroundColor: Colors.orange);
+        }
       }
-    }loading(false);
-  }on dio.DioException catch (e) {loading(false);
-  if (e.response != null) {
-    if (e.response?.data != null){
-      Get.snackbar("Sorry", "${e.response?.data['message']}", backgroundColor: Colors.orange);
+      loading(false);
+    } on dio.DioException catch (e) {
+      loading(false);
+      if (e.response != null) {
+        if (e.response?.data != null) {
+          Get.snackbar("Sorry", "${e.response?.data['message']}",
+              backgroundColor: Colors.orange);
+        }
+      } else {
+        Get.snackbar("Sorry", e.message ?? "", backgroundColor: Colors.red);
+      }
+    } catch (e) {
+      loading(false);
+      Get.snackbar("Error0", e.toString(), backgroundColor: Colors.red);
     }
-  }else {
-    Get.snackbar("Sorry", e.message ?? "", backgroundColor: Colors.red);
   }
-  } catch (e) {loading(false);
-  Get.snackbar("Error0", e.toString(), backgroundColor: Colors.red);
-  }
-  }
-  void increment() => count.value++;
 }
