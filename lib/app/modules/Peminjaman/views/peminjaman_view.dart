@@ -12,7 +12,7 @@ class PeminjamanView extends GetView<PeminjamanController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PeminjamanView'),
+        title: const Text('List Buku View'),
         centerTitle: true,
       ),
         body: controller.obx((state) => ListView.separated(
