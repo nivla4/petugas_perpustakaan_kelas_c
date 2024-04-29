@@ -37,13 +37,6 @@ class HomeView extends GetView<HomeController> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Pengaturan'),
-              onTap: () {
-                // Navigate to appropriate route
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.info),
               title: Text('Tentang'),
               onTap: () {
@@ -87,7 +80,7 @@ class HomeView extends GetView<HomeController> {
                   Expanded(
                     child: _buildFeatureButton(
                       icon: Icons.assignment,
-                      label: 'List Buku',
+                      label: 'Peminjaman',
                       route: Routes.PEMINJAMAN,
                     ),
                   ),
